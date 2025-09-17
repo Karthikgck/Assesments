@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Demo class</title>
+
+
+
+  <style>
+    :root{
+        --bg:#0f1724;
+        --card:#0b1220; 
+        --muted:#94a3b8;
+        --accent:#7c3aed;
+        --success:#10b981;
+        --danger:#ef4444;
+        --glass: rgba(255,255,255,0.03);
+        --radius:12px; 
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{
+        box-sizing:border-box
+    }
+    html,body{
+        height:100%
+    }
+    body{
+        margin:0; background:rgb(84, 82, 80);
+        color:#e6eef8;
+        padding:28px; -webkit-font-smoothing:antialiased;
+    }
+
+    header{
+        display:flex;
+        gap:16px;
+        align-items:center; 
+        margin-bottom:180px
+    }
+    h1{
+        margin:0;
+        font-size:20px
+    }
+    .sub{
+        color:var(--muted);
+         font-size:13px;
+    }
+
+    .container{
+        display:grid; 
+        grid-template-columns:320px 1fr; 
+        gap:20px
+    }
+
+    .panel{
+        background:var(--card); 
+        padding:16px; border-radius:12px; 
+        box-shadow:0 6px 18px rgba(10,15,30,0.6)
+    }
+    .filter-group{
+        margin-bottom:12px;
+    }
+    .chips{
+        display:flex; 
+        gap:8px; 
+        flex-wrap:wrap;
+    }
+    .chip{
+        padding:8px 12px; 
+        border-radius:999px; 
+        background:var(--glass); 
+        cursor:pointer; user-select:none; 
+        font-size:13px; color:var(--muted)
+    }
+    .chip.active{
+        background:linear-gradient(90deg,var(--accent),#5b21b6);
+        color:white;
+        box-shadow:0 4px 14px rgba(124,58,237,0.18)
+    }
+    select{
+        width:100%; 
+        padding:10px 12px;
+         border-radius:8px; 
+         background:transparent; 
+         color:inherit; 
+         border:1px dashed rgba(255,255,255,0.06)
+    }
+    .content{
+        min-height:60vh
+    }
+    .grid{
+        display:grid;
+         grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); 
+         gap:16px
+        }
+    .card{
+        background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); 
+        padding:12px; 
+        border-radius:12px; 
+        border:1px solid rgba(255,255,255,0.03); 
+        display:flex; 
+        flex-direction:column; 
+        gap:8px
+    }
+    .meta{
+        font-size:12px;
+        color:var(--muted)
+    }
+    .title{
+        font-weight:600
+    }
+    .row{
+        display:flex; justify-content:space-between; align-items:center}
+    .btn{
+        padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:600; border:0; background:var(--accent); color:white}
+        .btn:disabled
+        {opacity:0.6; cursor:not-allowed}
+        .btn.secondary{
+            background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); font-weight:600}
+    .booked{
+        background:linear-gradient(90deg,var(--success), #059669);}
+    .loading-wrap{
+        
+        display:flex; align-items:center; gap:12px}
+    .spinner{
+        width:36px;
+        height:36px;
+        border-radius:999px;
+        border:4px solid rgba(255,255,255,0.06); 
+        border-top-color:var(--accent); 
+        animation:spin 1s linear infinite
+    }
+    @keyframes spin{
+        to{transform:rotate(360deg)
+        }
+    }
+
+    .empty{
+        
+        padding:30px; 
+        text-align:center; 
+        color:var(--muted)
+    }
+    .snackbar{
+        position:fixed; 
+        left:50%; 
+        transform:translateX(-50%); 
+        bottom:24px; min-width:240px; max-width:90%; 
+        padding:12px 16px; 
+        border-radius:10px; 
+        box-shadow:0 10px 30px rgba(2,6,23,0.6); 
+        display:flex; gap:10px; 
+        align-items:center
+    }
+    .snackbar.info{
+        background:linear-gradient(90deg,#334155,#0f1724)
+    }
+    .snackbar.error{
+        background:linear-gradient(90deg,#58151a,#2b0b0d)
+    }
+    .muted{
+        color:var(--muted)
+    }
+    .filters-top{
+        display:flex; 
+        gap:12px; 
+        margin-bottom:12px;
+         align-items:center
+        }
+
+    @media (max-width:900px){
+      .container{grid-template-columns:1fr;}
+    }
+
+
+  </style>
+
+
+
+
+
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Browse Classes</h1>
+      <div class="sub">Find and quick-book classes — optimistic updates & simulated failures</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside class="panel">
+      <div class="filter-group">
+        <div class="muted" style="margin-bottom:8px">Level</div>
+        <div class="chips" id="levelChips">
+          <div class="chip" data-level="All">All</div>
+          <div class="chip" data-level="Beginner">Beginner</div>
+          <div class="chip" data-level="Intermediate">Intermediate</div>
+          <div class="chip" data-level="Advanced">Advanced</div>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <div class="muted" style="margin-bottom:8px">Instructor</div>
+        <select id="instructorSelect">
+          <option value="All">All Instructors</option>
+        </select>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn secondary" id="clearBtn">Clear Filters</button>
+      </div>
+
+      <hr style="border:none; height:1px; background:rgba(255,255,255,0.02); margin:14px 0">
+      <div class="muted">Tips</div>
+      <div style="font-size:13px;margin-top:8px;color:var(--muted)">Click <strong>Quick Book</strong> to simulate a booking. 15% failures will roll back the optimistic update.</div>
+    </aside>
+
+    <main class="content">
+      <div class="panel" id="mainPanel">
+        <div class="filters-top">
+          <div id="loadingState" style="display:flex;align-items:center;gap:10px">
+            <div class="loading-wrap"><div class="spinner"></div><div class="muted">Loading classes...</div></div>
+          </div>
+          <div style="margin-left:auto;color:var(--muted)" id="resultCount"></div>
+        </div>
+
+        <div id="gridWrap">
+          <div class="grid" id="grid"></div>
+          <div id="emptyState" style="display:none" class="empty">
+            <div style="font-size:18px;margin-bottom:8px">No classes match your filters</div>
+            <div class="muted">Try clearing filters to see all available classes.</div>
+            <div style="margin-top:12px"><button class="btn" id="emptyClear">Clear Filters</button></div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <div id="snackbarArea"></div>
+
+  <script>
+    const classes = [
+      { id:1, name:'Intro to Chess', level:'Beginner', instructor:'Kiran', center:'Downtown Center' },
+      { id:2, name:'Advanced Tactics', level:'Advanced', instructor:'Karthik', center:'Riverside Club' },
+      { id:3, name:'Intermediate Strategy', level:'Intermediate', instructor:'Kavitha', center:'Downtown Center' },
+      { id:4, name:'Kids Chess Fun', level:'Beginner', instructor:'Kavana', center:'Green Park' },
+      { id:5, name:'Endgame Mastery', level:'Advanced', instructor:'Kavya', center:'Riverside Club' },
+      { id:6, name:'Opening Principles', level:'Beginner', instructor:'Kariya', center:'Tech Hub' },
+      { id:7, name:'Positional Play', level:'Intermediate', instructor:'Kohli', center:'Tech Hub' }
+    ];
+
+    let state = {
+      loading:true,
+      level:'All',
+      instructor:'All',
+      bookings: {},
+    };
+
+    const grid = document.getElementById('grid');
+    const levelChips = document.getElementById('levelChips');
+    const instructorSelect = document.getElementById('instructorSelect');
+    const loadingState = document.getElementById('loadingState');
+    const emptyState = document.getElementById('emptyState');
+    const resultCount = document.getElementById('resultCount');
+    const snackbarArea = document.getElementById('snackbarArea');
+
+    function init(){
+      const instructors = ['All', ...Array.from(new Set(classes.map(c=>c.instructor)))];
+      instructors.forEach(i=>{
+        const opt = document.createElement('option'); opt.value = i; opt.textContent = i==='All' ? 'All Instructors' : i; instructorSelect.appendChild(opt);
+      })
+
+      Array.from(levelChips.querySelectorAll('.chip')).forEach(ch=>{
+        if(ch.dataset.level === 'All') ch.classList.add('active');
+        ch.addEventListener('click', ()=>{
+          Array.from(levelChips.querySelectorAll('.chip')).forEach(x=>x.classList.remove('active'));
+          ch.classList.add('active');
+          state.level = ch.dataset.level;
+          applyFilters();
+        })
+      })
+
+      instructorSelect.addEventListener('change', (e)=>{ state.instructor = e.target.value; applyFilters(); });
+      document.getElementById('clearBtn').addEventListener('click', clearFilters);
+      document.getElementById('emptyClear').addEventListener('click', clearFilters);
+
+      const ms = 1000 + Math.random()*1000;
+      setTimeout(()=>{ state.loading=false; render(); }, ms);
+
+      render();
+    }
+
+    function clearFilters(){
+      state.level='All'; state.instructor='All';
+      Array.from(levelChips.querySelectorAll('.chip')).forEach(c=>c.classList.toggle('active', c.dataset.level==='All'));
+      instructorSelect.value = 'All';
+      applyFilters();
+    }
+
+    function applyFilters(){ render(); }
+
+    function render(){
+      loadingState.style.display = state.loading ? 'flex' : 'none';
+
+      const filtered = classes.filter(c=>{
+        if(state.level !== 'All' && c.level !== state.level) return false;
+        if(state.instructor !== 'All' && c.instructor !== state.instructor) return false;
+        return true;
+      });
+
+      resultCount.textContent = state.loading ? '' : (filtered.length + ' result' + (filtered.length!==1?'s':''));
+
+      grid.innerHTML = '';
+      if(!state.loading && filtered.length === 0){
+        emptyState.style.display = 'block';
+      } else {
+        emptyState.style.display = 'none';
+        filtered.forEach(c=>{
+          const el = buildCard(c);
+          grid.appendChild(el);
+        })
+      }
+    }
+
+    function buildCard(data){
+      const el = document.createElement('div'); el.className='card';
+      const title = document.createElement('div'); title.className='title'; title.textContent = data.name;
+      const meta = document.createElement('div'); meta.className='meta'; meta.textContent = `${data.level} • ${data.instructor} • ${data.center}`;
+
+      const row = document.createElement('div'); row.className='row';
+      const statusWrap = document.createElement('div');
+
+      const booking = state.bookings[data.id] || { status:'idle' };
+      const btn = document.createElement('button'); btn.className='btn';
+      btn.textContent = booking.status === 'booked' ? 'Booked' : 'Quick Book';
+      if(booking.status === 'booked') btn.classList.add('booked');
+      if(booking.status === 'pending') { btn.disabled = true; btn.textContent = 'Booking...'; }
+
+      btn.addEventListener('click', ()=>quickBook(data.id, btn));
+
+      row.appendChild(statusWrap);
+      row.appendChild(btn);
+
+      el.appendChild(title);
+      el.appendChild(meta);
+      el.appendChild(row);
+      return el;
+    }
+
+    function showSnackbar(message, type='info', ms=3000){
+      const s = document.createElement('div'); s.className = 'snackbar ' + (type==='error' ? 'error' : 'info');
+      s.textContent = message;
+      snackbarArea.appendChild(s);
+      setTimeout(()=>{ s.style.opacity = '0'; s.style.transform = 'translateY(8px)'; }, ms-500);
+      setTimeout(()=> s.remove(), ms);
+    }
+
+    function quickBook(id, btn){
+      const current = state.bookings[id];
+      if(current && current.status === 'pending') return;
+      if(current && current.status === 'booked'){
+        showSnackbar('Already booked', 'info'); return;
+      }
+
+      state.bookings[id] = { status:'pending' };
+      btn.disabled = true; btn.textContent = 'Booking...';
+
+      showSnackbar('Attempting to book — optimistic update', 'info', 1500);
+
+      const serverDelay = 600 + Math.random()*800;
+      setTimeout(()=>{
+        const failed = Math.random() < 0.15; 
+        if(failed){
+          state.bookings[id] = { status:'idle' };
+          btn.disabled = false; btn.textContent = 'Quick Book';
+          showSnackbar('Booking failed — please try again', 'error', 3500);
+          render();
+        } else {
+          state.bookings[id] = { status:'booked' };
+          btn.disabled = false; btn.textContent = 'Booked'; btn.classList.add('booked');
+          showSnackbar('Booked ✓', 'info', 2200);
+          render();
+        }
+      }, serverDelay);
+    }
+
+    init();
+  </script>
+</body>
+</html>
